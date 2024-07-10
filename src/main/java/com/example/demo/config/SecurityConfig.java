@@ -16,11 +16,21 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
+                .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
+            )
             .formLogin((formLogin) -> formLogin
                 .loginPage("/user/login")
-                .defaultSuccessUrl("/"))
-        ;
+                .defaultSuccessUrl("/")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                // .failureUrl("/user/login?error=true")
+            )
+            .logout((logout) -> logout
+                .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+            );
         return http.build();
     }
 

@@ -1,0 +1,17 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Account Name</th>
+        </tr>
+        <tr th:each="account : ${accountList}">
+            <td th:text="${account.id}"></td>
+            <td th:text="${account.userId}"></td>
+            <td th:text="${account.accountName}"></td>
+        </tr>
+    </table>
+    <a href="/account/create?userId=1">Create New Account</a>
+</div>
+</html>

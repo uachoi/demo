@@ -42,6 +42,6 @@ public class UserAccountController {
     @PostMapping("/create")
     public String createAccount(@RequestParam("userId") Long userId, @ModelAttribute UserAccount userAccount) {
         userAccountService.createAccount(userId, userAccount);
-        return "redirect:/account/list";
+        return "redirect:/user/login";
     }
 }
