@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User Account</title>
+</head>
+<body>
+    <h1>증권 계좌 생성</h1>
+    <form id="accountForm">
+        <label for="accountNum">Account Number:</label>
+        <input type="text" id="accountNum" name="accountNum" required>
+        <br>
+        <label for="accountPW">Account Password:</label>
+        <input type="password" id="accountPW" name="accountPW" required>
+        <br>
+        <button type="submit">Create Account</button>
+    </form>
+
+    <p id="responseMessage"></p>
+
+    <script>
+        document.getElementById('accountForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const accountNum = document.getElementById('accountNum').value;
+            const accountPW = document.getElementById('accountPW').value;
+
+            fetch('/noname/accounts/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'accountNum': accountNum,
+                    'accountPW': accountPW
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('responseMessage').innerText = 'Account created with ID: ' + data.accountID;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('responseMessage').innerText = 'Error creating account';
+            });
+        });
+    </script>
+</body>
+</html>
