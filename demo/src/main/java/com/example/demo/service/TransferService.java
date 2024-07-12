@@ -19,11 +19,17 @@ public class TransferService {
         return userAccountRepository.findByAccountNumber(accountNumber);
     }
     // 이체 동작 처리
-    public Transfer transferMoney(Long userId, String accountNumber, Long amount) throws Exception{
+    public Transfer transferMoney(Long userId, String accountNumber, Long amount, String accountPassword) throws Exception{
         UserAccount userAccount = userAccountRepository.findByUserId(userId).orElseThrow(() -> new Exception("User not found"));
 
+        
         if(userAccount.getBalance()<amount){    // 원하는 이체 금액이 잔액보다 큰 경우
             throw new Exception("Insufficient balance");
+        }
+
+        // 비밀번호 검증
+        if (!userAccount.getAccountPassword().equals(accountPassword)) {
+            throw new Exception("Incorrect password");
         }
 
         // 내 계좌(이체하는 사람)에서 이체 금액만큼 빠짐

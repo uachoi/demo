@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface UserAccountRepository extends JpaRepository<UserAccount, Long> {
     Optional<UserAccount> findByUserId(Long userId);
     Optional<UserAccount> findByAccountNumber(String accountNumber);
-    UserAccount findByBalanace(int balance);
+    UserAccount findByBalance(int balance);
 }

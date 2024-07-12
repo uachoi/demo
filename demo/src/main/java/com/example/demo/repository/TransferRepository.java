@@ -13,5 +13,5 @@ import java.util.List;
 public interface TransferRepository extends JpaRepository<Transfer, Long>{
     UserAccount findByUserId(Long userId);
     UserAccount findByAccountNumber(String accountNumber);
-    UserAccount findByBalanace(int balance);
+    // UserAccount findByBalance(int balance);
 }
