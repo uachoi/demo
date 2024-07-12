@@ -22,8 +22,8 @@ public class TransferController {
     private UserAccountRepository userAccountRepository;
 
     // 특정 사용자의 정보를 가져오는 엔드포인트 (userId 기반)
-    @GetMapping("/info/{userId}")
-    public ResponseEntity<UserAccount> getByUserId(@PathVariable Long userId) {
+    @GetMapping("/info")
+    public ResponseEntity<UserAccount> getByUserId(@RequestParam("userId") Long userId) {
         UserAccount userAccount = userAccountRepository.findByUserId(userId)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         return ResponseEntity.ok(userAccount);
@@ -33,10 +33,10 @@ public class TransferController {
     public ResponseEntity<Transfer> transferMoney(@RequestBody TransferRequest transferRequest) {
         try {
             Transfer transfer = transferService.transferMoney(
-                transferRequest.getUserId(),
-                transferRequest.getAccountNumber(),
-                transferRequest.getAmount(),
-                transferRequest.getPassword()
+                    transferRequest.getUserId(),
+                    transferRequest.getAccountNumber(),
+                    transferRequest.getAmount(),
+                    transferRequest.getPassword()
             );
             return new ResponseEntity<>(transfer, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -49,7 +49,7 @@ class TransferRequest {
     private Long userId;
     private String accountNumber;
     private Long amount;
-    private String accountPassword;
+    private String password;
 
     // Getter and Setter methods
     public Long getUserId() {
@@ -77,10 +77,10 @@ class TransferRequest {
     }
 
     public String getPassword() {
-        return accountPassword;
+        return password;
     }
 
-    public void setPassword(String accountPassword) {
-        this.accountPassword = accountPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

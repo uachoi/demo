@@ -2,11 +2,16 @@ package com.example.demo.service;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
+
+//import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class TransferService {
 
     @Autowired
@@ -15,48 +20,43 @@ public class TransferService {
     @Autowired
     private TransferRepository transferRepository;
 
-    public Optional<UserAccount> getUserAccountNumber(String accountNumber){
-        return userAccountRepository.findByAccountNumber(accountNumber);
-    }
     // 이체 동작 처리
-    public Transfer transferMoney(Long userId, String accountNumber, Long amount, String accountPassword) throws Exception{
-        UserAccount userAccount = userAccountRepository.findByUserId(userId).orElseThrow(() -> new Exception("User not found"));
+    @Transactional
+    public Transfer transferMoney(Long userId, String accountNumber, Long amount, String accountPassword) throws Exception {
+        // 보내는 사람 계좌 조회
 
-        
-        if(userAccount.getBalance()<amount){    // 원하는 이체 금액이 잔액보다 큰 경우
-            throw new Exception("Insufficient balance");
-        }
+        UserAccount fromUserAccount = userAccountRepository.findByUserId(userId)
+                .orElseThrow(() -> new Exception("Sender not found"));
 
-        // 비밀번호 검증
-        if (!userAccount.getAccountPassword().equals(accountPassword)) {
-            throw new Exception("Incorrect password");
-        }
+
 
         // 내 계좌(이체하는 사람)에서 이체 금액만큼 빠짐
-        userAccount.setBalance(userAccount.getBalance()-amount);
-        userAccountRepository.save(userAccount); // 이체 후 잔액을 저장
+        fromUserAccount.setBalance(fromUserAccount.getBalance() - amount.intValue());
+        userAccountRepository.save(fromUserAccount); // 이체 후 잔액을 저장
 
-
-
-        // 받는 사람 계좌 조회
-        UserAccount receiverAccount = userAccountRepository.findByAccountNumber(accountNumber)
-            .orElseThrow(() -> new Exception("Receiver not found"));
+        // 받는 사람 계좌 조회 (계좌번호를 통해)
+        UserAccount toUserAccount = userAccountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new Exception("Receiver not found"));
 
         // 받는 사람 계좌에 이체 금액 추가 (+amount)
-        receiverAccount.setBalance(receiverAccount.getBalance() + amount);
-        userAccountRepository.save(receiverAccount); // 이체 후 잔액을 저장
+        toUserAccount.setBalance(toUserAccount.getBalance() + amount.intValue());
+        userAccountRepository.save(toUserAccount); // 이체 후 잔액을 저장
 
-
-
-
-        // 이체 내역을 tranfer 모델에 저장
-        Transfer transfer =new Transfer();
+        // 이체 내역을 transfer 모델에 저장
+        Transfer transfer = new Transfer();
         transfer.setUserId(userId);
-        transfer.setAccountNumber(accountNumber);
+        transfer.setAccountNumber(toUserAccount.getAccountNumber());
         transfer.setAmount(amount);
+        //System.out.println("transferAmount");
+
 
         return transferRepository.save(transfer);
+    }
 
+    public boolean verifyPassword(Long userId, String accountPassword) throws Exception {
+        UserAccount userAccount = userAccountRepository.findByUserId(userId)
+                .orElseThrow(() -> new Exception("User not found"));
+        return userAccount.getAccountPassword().equals(accountPassword);
     }
 
     public void saveTransfer(Transfer transfer) {
