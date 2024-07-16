@@ -29,7 +29,21 @@ public class TransactionController {
             transactionEntity.getUserId(),
             transactionEntity.getStockCode(),
             transactionEntity.getPrice(),
-            transactionEntity.getQuantity()
+            transactionEntity.getQuantity(),
+            transactionEntity.getProductName()
+            //transactionEntity.get
+            );
+        return ResponseEntity.status(201).body(transaction);
+    }
+
+    @PostMapping("/sell")
+    public ResponseEntity<?> handleSellStock(@Valid @RequestBody TransactionEntity transactionEntity)throws Exception{
+        Transaction transaction=transactionService.deleteTransaction(
+            transactionEntity.getUserId(),
+            transactionEntity.getStockCode(),
+            transactionEntity.getPrice(),
+            transactionEntity.getQuantity(),
+            transactionEntity.getProductName()
             //transactionEntity.get
             );
         return ResponseEntity.status(201).body(transaction);
@@ -52,6 +66,7 @@ class TransactionEntity{
     private String stockCode;
     private Long price;
     private int quantity;
+    private String productName;
 
     public Long getUserId() {
         return userId;
@@ -79,5 +94,12 @@ class TransactionEntity{
     }
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getProductName(){
+        return productName;
+    }
+    public void setProductName(String productName){
+        this.productName=productName;
     }
 }
