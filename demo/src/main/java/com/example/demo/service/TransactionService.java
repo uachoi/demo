@@ -37,6 +37,7 @@ public class TransactionService {
         transaction.setQuantity(quantity);
         transaction.setStockName(productName);
         transaction.setTimestamp(LocalDateTime.now());
+        transaction.setTradeType("buy");
 
         return transactionRepository.save(transaction);
     }
@@ -58,6 +59,7 @@ public class TransactionService {
         transaction.setQuantity(quantity);
         transaction.setStockName(productName);
         transaction.setTimestamp(LocalDateTime.now());
+        transaction.setTradeType("sell");
 
         return transactionRepository.save(transaction);
     }
